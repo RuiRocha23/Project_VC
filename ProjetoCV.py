@@ -30,12 +30,23 @@ def check_dirty(image, circle,x1,y1,x2,y2):
     y2 = min(image.shape[0], y2)
 
     cropped_image = circle_gray[y1:y2, x1:x2]
-    cv2.imwrite(f"Captura.png",cropped_image)
-    _, thresh = cv2.threshold(cropped_image, 200, 255, cv2.THRESH_BINARY) # Threshold para identificar pixeis diferentes de branco
+
+    height, width = cropped_image.shape[:2]
+
+    if height > width:
+        scale_factor = 250 / height
+    else:
+        scale_factor = 250 / width
+
+    resized_img = cv2.resize(cropped_image, (int(width * scale_factor), int(height * scale_factor)))
+
+
+    cv2.imwrite(f"Captura.png",resized_img)
+    _, thresh = cv2.threshold(resized_img, 200, 255, cv2.THRESH_BINARY) # Threshold para identificar pixeis diferentes de branco
     cv2.imwrite(f"Thresh.png",thresh)
     non_white_pixels = thresh.size - cv2.countNonZero(thresh)                         # Conta numero de pixeis pretos
     print(non_white_pixels)
-    if(non_white_pixels > 8000):
+    if(non_white_pixels > 20000):
         return True
     else:
         return False
