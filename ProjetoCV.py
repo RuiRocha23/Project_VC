@@ -66,7 +66,7 @@ def text_feedback(feedback):
 def amount_dirty_plates(dirty_plates):
     text = "Amount of dirty plates: {}".format(dirty_plates)
     font_scale = 0.5
-    thickness = 1
+    thickness = 2
     (text_width, text_height), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, font_scale, thickness)
     padding = 10
     text_x = padding
@@ -84,12 +84,7 @@ def centers_distance(x1,y1,x2,y2):
         height = y2 - y1
     else:
         height = y1 - y2
-               
-    if height == 0:
-        return width
-    elif width == 0:
-        return height    
-    
+                
     return math.sqrt((width ** 2) + (height ** 2))
 
 
@@ -127,10 +122,11 @@ while cv2.waitKey(1) != ord('q'):
                 for j in range(i+1,len(detected_circles[0,:])):
                     x1, y1, r1 = detected_circles[0, i]  
                     x2, y2, r2 = detected_circles[0, j]
-
                     distance = centers_distance(x1,y1,x2,y2)
                     if distance < r1 + r2:
                         print("sobrepostos")
+                        dirty_plates+=1
+
                     
 
         amount_dirty_plates(dirty_plates)
