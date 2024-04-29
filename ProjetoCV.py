@@ -82,7 +82,7 @@ while cv2.waitKey(1) != ord('q'):
     par_1 ,par_2,threshold= trackbar_values()
     gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
-    detected_circles = cv2.HoughCircles(blurred_image, cv2.HOUGH_GRADIENT, 1, 50, param1 = par_1, param2 = par_2, minRadius = 0, maxRadius = 100)
+    detected_circles = cv2.HoughCircles(blurred_image, cv2.HOUGH_GRADIENT, 1, 50, param1 = par_1, param2 = par_2, minRadius = 0, maxRadius = 500)
 
     if detected_circles is not None:
         dirty_plates=0
