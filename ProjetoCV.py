@@ -42,9 +42,9 @@ def check_dirty(image, circle,x1,y1,x2,y2,threshold):
     #thresh=cv2.adaptiveThreshold(resized_img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, (threshold*2+1), c)
     _, thresh = cv2.threshold(resized_img, threshold, 255, cv2.THRESH_BINARY)           # Threshold para identificar pixeis diferentes de branco
     cv2.imwrite(f"Thresh.png",thresh)
-    non_white_pixels = thresh.size - cv2.countNonZero(thresh)                         # Conta numero de pixeis pretos
-    print(non_white_pixels)
-    if(non_white_pixels > 20000):
+    black_pixels = thresh.size - cv2.countNonZero(thresh)                         # Conta numero de pixeis pretos
+    print(black_pixels)
+    if(black_pixels > 20000):
         return True
     else:
         return False
