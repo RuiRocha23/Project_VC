@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
  
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("Video.mp4")
 
 def trackbarcallback(value):
     #print(value)
@@ -87,10 +87,23 @@ def centers_distance(x1,y1,x2,y2):
                 
     return math.sqrt((width ** 2) + (height ** 2))
 
+def detect_overlapping(detected_circles):
+    dirty_plates=0
+    if((len(detected_circles[0,:]))>=2):
+        #print(len(detected_circles[0,:]))
+            for i in range(len(detected_circles[0,:])):
+                for j in range(i+1,len(detected_circles[0,:])):
+                    x1, y1, r1 = detected_circles[0, i]  
+                    x2, y2, r2 = detected_circles[0, j]
+                    distance = centers_distance(x1,y1,x2,y2)
+                    if distance < r1 + r2:
+                        print(f"The plate {i} and plate {j} are overlapping")
+                        dirty_plates+=1
+    return dirty_plates
 
 
 
-while cv2.waitKey(1) != ord('q'):
+while cv2.waitKey(18) != ord('q'):
     ret, frame = cap.read()
     ret, frame2= cap.read()
     par_1 ,par_2,threshold= trackbar_values()
@@ -114,18 +127,8 @@ while cv2.waitKey(1) != ord('q'):
                 text_feedback("Clean")
             cv2.rectangle(frame2, (x1, y1), (x2, y2), (255, 0, 0), 2)
 
+        dirty_plates+=detect_overlapping(detected_circles)
     
-        
-        if((len(detected_circles[0,:]))>=2):
-            #print(len(detected_circles[0,:]))
-            for i in range(len(detected_circles[0,:])):
-                for j in range(i+1,len(detected_circles[0,:])):
-                    x1, y1, r1 = detected_circles[0, i]  
-                    x2, y2, r2 = detected_circles[0, j]
-                    distance = centers_distance(x1,y1,x2,y2)
-                    if distance < r1 + r2:
-                        print("sobrepostos")
-                        dirty_plates+=1
 
                     
 
