@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
  
-cap = cv2.VideoCapture("Video.mp4")
+cap = cv2.VideoCapture("Video4.mp4")
 
 def trackbarcallback(value):
     #print(value)
@@ -10,8 +10,8 @@ def trackbarcallback(value):
 
 cv2.namedWindow('trackbar')
 cv2.createTrackbar('par1','trackbar',90,100,trackbarcallback)
-cv2.createTrackbar('par2','trackbar',60,100,trackbarcallback)
-cv2.createTrackbar('thresh','trackbar',100,500,trackbarcallback)
+cv2.createTrackbar('par2','trackbar',80,100,trackbarcallback)
+cv2.createTrackbar('thresh','trackbar',150,500,trackbarcallback)
 
 
 def trackbar_values():
