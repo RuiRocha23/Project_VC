@@ -11,7 +11,7 @@ def trackbarcallback(value):
 cv2.namedWindow('trackbar')
 cv2.createTrackbar('par1','trackbar',90,100,trackbarcallback)
 cv2.createTrackbar('par2','trackbar',60,100,trackbarcallback)
-cv2.createTrackbar('thresh','trackbar',101,500,trackbarcallback)
+cv2.createTrackbar('thresh','trackbar',100,500,trackbarcallback)
 
 
 def trackbar_values():
@@ -89,27 +89,31 @@ def centers_distance(x1,y1,x2,y2):
 
 def detect_overlapping(detected_circles):
     dirty_plates=0
+    first_cycle=True
     if((len(detected_circles[0,:]))>=2):
         #print(len(detected_circles[0,:]))
-            for i in range(len(detected_circles[0,:])):
-                for j in range(i+1,len(detected_circles[0,:])):
-                    x1, y1, r1 = detected_circles[0, i]  
-                    x2, y2, r2 = detected_circles[0, j]
-                    distance = centers_distance(x1,y1,x2,y2)
-                    if distance < r1 + r2:
-                        print(f"The plate {i} and plate {j} are overlapping")
+        for i in range(len(detected_circles[0,:])):
+            for j in range(i+1,len(detected_circles[0,:])):
+                x1, y1, r1 = detected_circles[0, i]  
+                x2, y2, r2 = detected_circles[0, j]
+                distance = centers_distance(x1,y1,x2,y2)
+                if distance < r1 + r2:
+                    if(first_cycle):
                         dirty_plates+=1
+                        first_cycle=False
+                    print(f"The plate {i} and plate {j} are overlapping")
+                    dirty_plates+=1
     return dirty_plates
 
 
 
-while cv2.waitKey(18) != ord('q'):
+while cv2.waitKey(33) != ord('q'):
     ret, frame = cap.read()
     ret, frame2= cap.read()
     par_1 ,par_2,threshold= trackbar_values()
     gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
-    detected_circles = cv2.HoughCircles(blurred_image, cv2.HOUGH_GRADIENT, 1, 50, param1 = par_1, param2 = par_2, minRadius = 0, maxRadius = 200)
+    detected_circles = cv2.HoughCircles(blurred_image, cv2.HOUGH_GRADIENT, 1, 50, param1 = par_1, param2 = par_2, minRadius = 0, maxRadius = 1000)
 
     if detected_circles is not None:
         dirty_plates=0
@@ -129,14 +133,12 @@ while cv2.waitKey(18) != ord('q'):
 
         dirty_plates+=detect_overlapping(detected_circles)
     
-
-                    
-
         amount_dirty_plates(dirty_plates)
         dirty_plates=0
         #print(len(detected_circles[0,:]))
 
     cv2.imshow("Detected Circle", frame2) 
+
 
 
 
