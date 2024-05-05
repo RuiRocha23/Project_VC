@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
  
-cap = cv2.VideoCapture("Video4.mp4")
+cap = cv2.VideoCapture("Video5.mp4")
 
 def trackbarcallback(value):
     #print(value)
@@ -40,11 +40,19 @@ def check_dirty(image, circle,x1,y1,x2,y2,threshold):
 
 
     cv2.imwrite(f"Captura.png",resized_img)
-    #thresh=cv2.adaptiveThreshold(resized_img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, (threshold*2+1), c)
+
+    """template_image= cv2.imread("plate_template.png")
+    captured_image = cv2.imread("Captura.png")
+
+    result = cv2.matchTemplate(captured_image,template_image,cv2.TM_CCOEFF_NORMED)
+    min_val,max_val,min_loc,max_loc = cv2.minMaxLoc(result)
+
+    print(f"Similaridade {max_val}")"""
+
     _, thresh = cv2.threshold(resized_img, threshold, 255, cv2.THRESH_BINARY)           # Threshold para identificar pixeis diferentes de branco
     cv2.imwrite(f"Thresh.png",thresh)
     black_pixels = thresh.size - cv2.countNonZero(thresh)                         # Conta numero de pixeis pretos
-    #print(black_pixels)
+    #qprint(black_pixels)
     if(black_pixels > 20000):
         return True
     else:
@@ -108,7 +116,7 @@ def detect_overlapping(detected_circles):
 
 
 while cv2.waitKey(33) != ord('q'):
-    ret, frame = cap.read()
+    ret, frame = cap.read()                             
     ret, frame2= cap.read()
     par_1 ,par_2,threshold= trackbar_values()
     gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
