@@ -2,7 +2,11 @@ import cv2
 import numpy as np
 import math
  
-cap = cv2.VideoCapture("Video.mp4")
+cap = cv2.VideoCapture("VModelo.mp4")
+
+x1, y1 = 0,0
+x2, y2 = 0,0
+
 
 def trackbarcallback(value):
     #print(value)
@@ -71,6 +75,79 @@ def text_feedback(feedback):
     cv2.rectangle(frame2, (new_x1, new_y1), (new_x2, new_y2), (255, 0, 0), -1)
     cv2.putText(frame2, text, (text_x, text_y), font, font_scale, (255, 255, 255), thickness)
 
+"""def detect_napkin():
+    template = cv2.imread('napkin_template.png', cv2.IMREAD_GRAYSCALE)
+
+    gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
+    edges = cv2.Canny(blurred_image, 50, 150)
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    moments_template = cv2.moments(template)
+    hu_moments_template = cv2.HuMoments(moments_template).flatten()
+
+    for contour in contours:
+        epsilon = 0.04 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
+        x, y, w, h = cv2.boundingRect(contour)
+        cv2.rectangle(frame3, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        
+        if len(approx) == 3:
+
+            moments = cv2.moments(contour)
+            hu_moments = cv2.HuMoments(moments).flatten()
+            similarity = cv2.matchShapes(hu_moments_template, hu_moments, cv2.CONTOURS_MATCH_I1, 0.0)
+
+            if(similarity > 5):
+            #print(similarity)
+                x, y, w, h = cv2.boundingRect(contour)
+                cv2.rectangle(frame2, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                x1,y1=x, y
+                x2,y2=x + w, y + h
+                new_x1, new_y1 = x1, y1 - 30
+                new_x2, new_y2 = x2, y1
+                text = "napkin"
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                font_scale = 0.8
+                thickness = 2
+                text_size = cv2.getTextSize(text, font, font_scale, thickness)[0]
+                text_x = new_x1 + (new_x2 - new_x1 - text_size[0]) // 2
+                text_y = new_y1 + (new_y2 - new_y1 + text_size[1]) // 2
+                cv2.rectangle(frame2, (new_x1, new_y1), (new_x2, new_y2), (0, 255, 0), -1)
+                cv2.putText(frame2, text, (text_x, text_y), font, font_scale, (255, 255, 255), thickness)"""
+
+
+def detect_knife():
+    gray_image = cv2.cvtColor(frame3, cv2.COLOR_BGR2GRAY)
+    blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
+    edges = cv2.Canny(blurred_image, 50, 150)
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #cv2.drawContours(frame3, contours,-1, (0, 255, 0), 2)
+    knife_template = cv2.imread("knife_template.png")
+    gray_knife = cv2.cvtColor(knife_template, cv2.COLOR_BGR2GRAY)
+    moments_template = cv2.moments(gray_knife)
+    hu_moments_template = cv2.HuMoments(moments_template).flatten()
+
+
+    for contour in contours:
+        
+        x, y, w, h = cv2.boundingRect(contour)
+        roi = frame[y:y+h, x:x+w]
+        gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+        moments = cv2.moments(gray_roi)
+        hu_moments = cv2.HuMoments(moments).flatten()
+        similarity = cv2.matchShapes(hu_moments_template, hu_moments, cv2.CONTOURS_MATCH_I1, 0.0)
+        if(similarity > 50):
+            cv2.rectangle(frame2, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        #print(similarity)
+  
+
+
+
+   
+ 
+
+
 def amount_dirty_plates(dirty_plates):
     text = "Amount of dirty plates: {}".format(dirty_plates)
     font_scale = 0.5
@@ -118,10 +195,14 @@ def detect_overlapping(detected_circles):
 while cv2.waitKey(33) != ord('q'):
     ret, frame = cap.read()                             
     ret, frame2= cap.read()
+    ret, frame3= cap.read()
     par_1 ,par_2,threshold= trackbar_values()
     gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
     detected_circles = cv2.HoughCircles(blurred_image, cv2.HOUGH_GRADIENT, 1, 50, param1 = par_1, param2 = par_2, minRadius = 0, maxRadius = 1000)
+
+    #detect_napkin()
+    detect_knife()
 
     if detected_circles is not None:
         dirty_plates=0
@@ -145,7 +226,8 @@ while cv2.waitKey(33) != ord('q'):
         dirty_plates=0
         #print(len(detected_circles[0,:]))
 
-    cv2.imshow("Detected Circle", frame2) 
+    cv2.imshow("Detected Circle", frame2)
+    cv2.imshow("cinza",frame3)
 
 
 
