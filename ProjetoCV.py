@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
  
-cap = cv2.VideoCapture("VP2.mp4")
+cap = cv2.VideoCapture("VP.mp4")
 ret, frame = cap.read()
 background = frame
 
@@ -10,8 +10,6 @@ x1, y1 = 0,0
 x2, y2 = 0,0
 
 backSub = cv2.createBackgroundSubtractorMOG2()
-
-
 
 def trackbarcallback(value):
     #print(value)
@@ -101,7 +99,7 @@ def text_feedback(feedback):
  
 
 def amount_dirty_plates(dirty_plates):
-    text = "Amount of dirty plates: {}".format(dirty_plates)
+    text = f"Amount of dirty plates: {dirty_plates}"
     font_scale = 0.5
     thickness = 2
     (text_width, text_height), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, font_scale, thickness)
