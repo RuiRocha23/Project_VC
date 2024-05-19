@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
  
-cap = cv2.VideoCapture("VP.mp4")
+cap = cv2.VideoCapture("VP2.mp4")
 ret, frame = cap.read()
 background = frame
 
