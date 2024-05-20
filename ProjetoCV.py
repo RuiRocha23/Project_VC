@@ -19,8 +19,8 @@ def trackbarcallback(value):
     pass
 
 cv2.namedWindow('trackbar')
-cv2.createTrackbar('par1','trackbar',70,100,trackbarcallback)
-cv2.createTrackbar('par2','trackbar',60,100,trackbarcallback)
+cv2.createTrackbar('par1','trackbar',60,100,trackbarcallback)
+cv2.createTrackbar('par2','trackbar',45,100,trackbarcallback)
 cv2.createTrackbar('thresh','trackbar',150,500,trackbarcallback)
 
 
@@ -32,7 +32,7 @@ def check_dirty(image, circle,x1,y1,x2,y2,threshold):
     x, y, r = circle[0], circle[1], circle[2]
     circle_mask = np.zeros(image.shape[:2], dtype=np.uint8)             # Extrai a região dentro do circulo
     cv2.circle(circle_mask, (x, y), r, 255, -1)
-    circle_roi = cv2.bitwise_and(image, image, mask=circle_mask)        #Região de interesse
+    circle_roi = cv2.bitwise_and(image, image, mask=circle_mask)        # Região de interesse
     circle_gray = cv2.cvtColor(circle_roi, cv2.COLOR_BGR2GRAY)          # Converte para grayscale
     
     x1,y1 = max(0, x1), max(0, y1)
@@ -54,7 +54,7 @@ def check_dirty(image, circle,x1,y1,x2,y2,threshold):
 
     _, thresh = cv2.threshold(resized_img, threshold, 255, cv2.THRESH_BINARY)           # Threshold para identificar pixeis diferentes de branco
     cv2.imwrite(f"Thresh.png",thresh)
-    black_pixels = thresh.size - cv2.countNonZero(thresh)                         # Conta numero de pixeis pretos
+    black_pixels = thresh.size - cv2.countNonZero(thresh)                               # Conta numero de pixeis pretos
     #print(black_pixels)
     if(black_pixels > 20000):
         return True
@@ -82,7 +82,6 @@ def mouse_callback(event, x, y, flags, param):
 
 
 def detect_fork(contour):
-    #cv2.drawContours(frame3, contours,-1, (0, 255, 0), 2)
     fork_template = cv2.imread("fork_template.png")
     gray_fork = cv2.cvtColor(fork_template, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(gray_fork, 127, 255, cv2.THRESH_BINARY)
@@ -163,16 +162,6 @@ def detect_knife(contour):
         cv2.putText(frame3, text, (text_x, text_y), font, font_scale, (255, 255, 255), thickness)
 
 
-
-        #text_feedback("Faca",(0, 0, 255))
-    #similarity = abs(hu_moments_template-hu_moments)
-    #print(similarity)
-    #if(similarity > 50):
-    #    cv2.rectangle(frame2, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-
- 
-
 def text_amount(dirty_plates,messy_objects):
     width, height = 500, 200
     black_bg = np.zeros((height, width, 3), dtype=np.uint8)  
@@ -229,7 +218,7 @@ def detect_overlapping(detected_circles):
 cv2.namedWindow('Frame')
 cv2.setMouseCallback('Frame', mouse_callback)
 
-while cv2.waitKey(33) != ord('q'):                           
+while cv2.waitKey(1) != ord('q'):                           
     par_1 ,par_2,threshold= trackbar_values()
     dirty_plates=0
     messy_objects = 0
@@ -237,18 +226,22 @@ while cv2.waitKey(33) != ord('q'):
 
 
     if len(points) < 2:
+        text = "Choose working space with 2 clicks!"
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        scale = 0.5
+        color = (0, 255, 0)  # White color in BGR
+        thickness = 1
+        position = (10, 30)
+        cv2.putText(frame, text, position, font, scale, color, thickness, cv2.LINE_AA)
         cv2.imshow('Frame', frame)
-    elif (ready is False):
 
+    elif (ready is False):
         top_left = points[0]
         bottom_right = points[1]
         cv2.rectangle(frame4, top_left, bottom_right, (0, 255, 0), 2)
         cv2.imshow("ROI", frame4)
         cv2.destroyWindow('Frame')
         ready = True
-
-
-    
 
     if(ready):
         ret, frame = cap.read()  
@@ -263,7 +256,6 @@ while cv2.waitKey(33) != ord('q'):
         frame = frame[y_min:y_max, x_min:x_max]
         frame2= frame.copy()
         frame3= frame.copy()
-        #cv2.imshow("frame3",frame)
 
         if(first):
             first = False
@@ -314,8 +306,6 @@ while cv2.waitKey(33) != ord('q'):
             dirty_plates+=detect_overlapping(detected_circles)
         
         text_amount(dirty_plates,messy_objects)
-
-
         cv2.imshow("Detected Plates", frame2)
         cv2.imshow("Detected messy dishes",frame3)
         messy_plates=0
