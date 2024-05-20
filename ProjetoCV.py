@@ -74,7 +74,8 @@ def mouse_callback(event, x, y, flags, param):
     global points
     if event == cv2.EVENT_LBUTTONDOWN:
         points.append((x, y))
-        print(f'Ponto selecionado: {x}, {y}')
+        cv2.circle(frame, (x, y), 2, (0, 255, 0), -1)
+        print(f'Selected point: {x}, {y}')
 
 
 def detect_fork(contour):
@@ -97,10 +98,10 @@ def detect_fork(contour):
         hu_moments[i] = -np.sign(hu_moments[i]) * np.log10(abs(hu_moments[i]))
         hu_moments_template[i] = -np.sign(hu_moments_template[i]) * np.log10(abs(hu_moments_template[i]))
 
-    distancia = np.linalg.norm(hu_moments_template - hu_moments)
-    print(distancia)
+    distance = np.linalg.norm(hu_moments_template - hu_moments)
+    print(distance)
 
-    if(distancia < 10):
+    if(distance < 10):
         new_x1, new_y1 = x, y - 30
         new_x2, new_y2 = x+w, y
         text = "fork"
@@ -140,11 +141,11 @@ def detect_knife(contour):
         hu_moments[i] = -np.sign(hu_moments[i]) * np.log10(abs(hu_moments[i]))
         hu_moments_template[i] = -np.sign(hu_moments_template[i]) * np.log10(abs(hu_moments_template[i]))
 
-    distancia = np.linalg.norm(hu_moments_template - hu_moments)
+    distance = np.linalg.norm(hu_moments_template - hu_moments)
 #---------------------------------------------------------------------------------
-    print(distancia)
+    print(distance)
 
-    if(distancia < 20):
+    if(distance < 20):
         new_x1, new_y1 = x, y - 30
         new_x2, new_y2 = x+w, y
         text = "Knife"
@@ -159,7 +160,7 @@ def detect_knife(contour):
 
 
 def text_amount(dirty_plates,messy_objects):
-    width, height = 500, 200
+    width, height = 260, 100
     black_bg = np.zeros((height, width, 3), dtype=np.uint8)  
 
     text1 = "Amount of dirty plates: " + str(dirty_plates)
@@ -168,16 +169,9 @@ def text_amount(dirty_plates,messy_objects):
     font_scale = 0.8
     color = (255, 255, 255)
     thickness = 2
-    (text_width1, text_height1), _ = cv2.getTextSize(text1, font, font_scale, thickness)
-    (text_width2, text_height2), _ = cv2.getTextSize(text2, font, font_scale, thickness)
+    cv2.putText(black_bg, text1, (10, 30), font, scale, color, thickness, cv2.LINE_AA)
+    cv2.putText(black_bg, text2, (10, 60), font, scale, color, thickness, cv2.LINE_AA)
 
-    x1 = (width - text_width1) // 2
-    y1 = height // 3
-
-    x2 = (width - text_width2) // 2
-    y2 = 2 * height // 3
-    cv2.putText(black_bg, text1, (x1, y1), font, font_scale, color, thickness, cv2.LINE_AA)
-    cv2.putText(black_bg, text2, (x2, y2), font, font_scale, color, thickness, cv2.LINE_AA)
     cv2.imshow('Quantity', black_bg)
 
 def centers_distance(x1,y1,x2,y2):
@@ -197,7 +191,6 @@ def detect_overlapping(detected_circles):
     dirty_plates=0
     first_cycle=True
     if((len(detected_circles[0,:]))>=2):
-        #print(len(detected_circles[0,:]))
         for i in range(len(detected_circles[0,:])):
             for j in range(i+1,len(detected_circles[0,:])):
                 x1, y1, r1 = detected_circles[0, i]  
@@ -219,7 +212,6 @@ while cv2.waitKey(1) != ord('q'):
     dirty_plates=0
     messy_objects = 0
     frame4= frame.copy()
-
 
     if len(points) < 2:
         text = "Choose working space with 2 clicks!"
@@ -286,7 +278,6 @@ while cv2.waitKey(1) != ord('q'):
 
         if detected_circles is not None:
             detected_circles = np.uint16(np.around(detected_circles))
-
             for pt in detected_circles[0, :]:
                 x, y, r = pt[0], pt[1], pt[2]
                 x1, y1 = x - r, y - r
