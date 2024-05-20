@@ -88,7 +88,7 @@ def detect_fork(contour):
     _, thresh = cv2.threshold(gray_fork, 127, 255, cv2.THRESH_BINARY)
     moments_template = cv2.moments(thresh)
     moments_template = cv2.moments(gray_fork)
-    hu_moments_template = cv2.HuMoments(moments_template).flatten()
+    hu_moments_template = cv2.HuMoments(moments_template)
 
 
     x, y, w, h = cv2.boundingRect(contour)
@@ -96,7 +96,7 @@ def detect_fork(contour):
     gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(gray_roi, 127, 255, cv2.THRESH_BINARY)
     moments = cv2.moments(thresh)
-    hu_moments = cv2.HuMoments(moments).flatten()
+    hu_moments = cv2.HuMoments(moments)
 
     for i in range(0, 7):
         hu_moments[i] = -np.sign(hu_moments[i]) * np.log10(abs(hu_moments[i]))
@@ -129,7 +129,7 @@ def detect_knife(contour):
     gray_knife = cv2.cvtColor(knife_template, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(gray_knife, 127, 255, cv2.THRESH_BINARY)
     moments_template = cv2.moments(thresh)
-    hu_moments_template = cv2.HuMoments(moments_template).flatten()
+    hu_moments_template = cv2.HuMoments(moments_template)
 
 
     x, y, w, h = cv2.boundingRect(contour)
@@ -138,7 +138,7 @@ def detect_knife(contour):
 
     _, thresh = cv2.threshold(gray_roi, 127, 255, cv2.THRESH_BINARY)
     moments = cv2.moments(thresh)
-    hu_moments = cv2.HuMoments(moments).flatten()
+    hu_moments = cv2.HuMoments(moments)
 
 #-------------------Algoritmo Copiado--------------------------------------------
     for i in range(0, 7):
