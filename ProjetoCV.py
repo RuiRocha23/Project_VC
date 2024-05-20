@@ -94,11 +94,13 @@ def detect_fork(contour):
     moments = cv2.moments(thresh)
     hu_moments = cv2.HuMoments(moments)
 
+#-------------------Algoritmo Copiado--------------------------------------------
     for i in range(0, 7):
         hu_moments[i] = -np.sign(hu_moments[i]) * np.log10(abs(hu_moments[i]))
         hu_moments_template[i] = -np.sign(hu_moments_template[i]) * np.log10(abs(hu_moments_template[i]))
 
     distance = np.linalg.norm(hu_moments_template - hu_moments)
+#---------------------------------------------------------------------------------
     print(distance)
 
     if(distance < 10):
@@ -217,7 +219,7 @@ while cv2.waitKey(1) != ord('q'):
         text = "Choose working space with 2 clicks!"
         font = cv2.FONT_HERSHEY_SIMPLEX
         scale = 0.5
-        color = (0, 255, 0)  # White color in BGR
+        color = (0, 255, 0)  
         thickness = 1
         position = (10, 30)
         cv2.putText(frame, text, position, font, scale, color, thickness, cv2.LINE_AA)
