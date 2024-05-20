@@ -299,10 +299,6 @@ while cv2.waitKey(1) != ord('q'):
         cv2.imshow("Detected messy dishes",frame3)
         messy_plates=0
 
-
-
-
-
 cap.release()
 cv2.waitKey(0)
 cv2.destroyAllWindows() 
