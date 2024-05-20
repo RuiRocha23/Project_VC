@@ -12,8 +12,6 @@ first = True
 x1, y1 = 0,0
 x2, y2 = 0,0
 
-backSub = cv2.createBackgroundSubtractorMOG2()
-
 def trackbarcallback(value):
     #print(value)
     pass
@@ -22,8 +20,6 @@ cv2.namedWindow('trackbar')
 cv2.createTrackbar('par1','trackbar',60,100,trackbarcallback)
 cv2.createTrackbar('par2','trackbar',45,100,trackbarcallback)
 cv2.createTrackbar('thresh','trackbar',150,500,trackbarcallback)
-
-
 
 def trackbar_values():
     return cv2.getTrackbarPos('par1','trackbar'),cv2.getTrackbarPos('par2','trackbar'),cv2.getTrackbarPos('thresh','trackbar')
